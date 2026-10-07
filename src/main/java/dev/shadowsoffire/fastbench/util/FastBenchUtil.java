@@ -46,9 +46,9 @@ public class FastBenchUtil {
 
             ItemStack itemstack = ItemStack.EMPTY;
 
-            Recipe<CraftingContainer> oldRecipe = (Recipe<CraftingContainer>) result.getRecipeUsed();
+            Recipe<CraftingContainer> oldRecipe = (Recipe<CraftingContainer>) RecipeCache.current(result, world);
             Recipe<CraftingContainer> recipe = oldRecipe;
-            if (recipe == null || !recipe.matches(inv, world)) recipe = findRecipe(inv, world);
+            if (recipe == null || !recipe.matches(inv, world)) recipe = RecipeCache.resolve(findRecipe(inv, world), inv, world);
 
             if (recipe != null) itemstack = recipe.assemble(inv, world.registryAccess());
 
@@ -98,7 +98,7 @@ public class FastBenchUtil {
         ItemStack outputCopy = ItemStack.EMPTY;
         if (resultSlot != null && resultSlot.hasItem()) {
             craftMatrix.checkChanges = false;
-            Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) craftResult.getRecipeUsed();
+            Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) RecipeCache.current(craftResult, player.level());
             while (recipe != null && recipe.matches(craftMatrix, player.level())) {
                 ItemStack recipeOutput = recipe.assemble(craftMatrix, player.level().registryAccess());
                 if (recipeOutput.isEmpty()) throw new RuntimeException("A recipe matched but produced an empty output - Offending Recipe : " + recipe.getId() + " - This is NOT a bug in FastWorkbench!");

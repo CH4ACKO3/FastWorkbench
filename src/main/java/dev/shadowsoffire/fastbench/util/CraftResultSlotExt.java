@@ -47,9 +47,9 @@ public class CraftResultSlotExt extends ResultSlot {
         this.removeCount = 0;
 
         // Have to copy this code because vanilla nulls out the recipe, which shouldn't be done.
-        Recipe<?> recipe = this.inv.getRecipeUsed();
+        Recipe<?> recipe = RecipeCache.current(this.inv, this.player.level());
         if (recipe != null) {
-            this.player.triggerRecipeCrafted(this.inv.getRecipeUsed(), this.craftSlots.getItems());
+            this.player.triggerRecipeCrafted(recipe, this.craftSlots.getItems());
             if (!recipe.isSpecial()) {
                 this.player.awardRecipes(Collections.singleton(recipe));
             }
@@ -62,7 +62,7 @@ public class CraftResultSlotExt extends ResultSlot {
         this.checkTakeAchievements(stack);
         ForgeHooks.setCraftingPlayer(player);
         List<ItemStack> list;
-        Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) this.inv.getRecipeUsed();
+        Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) RecipeCache.current(this.inv, player.level());
         if (recipe != null && recipe.matches(this.craftSlots, player.level())) list = recipe.getRemainingItems(this.craftSlots);
         else list = this.craftSlots.getItems();
         ForgeHooks.setCraftingPlayer(null);
@@ -96,7 +96,7 @@ public class CraftResultSlotExt extends ResultSlot {
     public ItemStack getItem() {
         if (player.level().isClientSide) return super.getItem();
         // Crafting Tweaks fakes 64x right click operations to right-click craft a stack to the "held" item, so we need to verify the recipe here.
-        Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) this.inv.getRecipeUsed();
+        Recipe<CraftingContainer> recipe = (Recipe<CraftingContainer>) RecipeCache.current(this.inv, player.level());
         if (recipe != null && recipe.matches(this.craftSlots, player.level())) return super.getItem();
         return ItemStack.EMPTY;
     }
